@@ -1,0 +1,132 @@
+﻿body {
+   font-family: 'Raleway', sans-serif;
+   font-weight: 300;
+}
+
+table {
+	background-color: transparent;
+	border-collapse: collapse;
+	padding: 0;
+	border-spacing: 0px;
+}
+
+p, ul {
+	font-size: 20px;
+}
+
+.navigation{
+	width:140px;
+}
+
+.navigation table{
+	width:100%;
+}
+
+.navigation input{
+	width:100%;
+}
+
+#options {
+	padding-left: 10px;
+}
+
+#content{
+	background-color:white;
+}
+
+/*this div goes around the board for relative positioning*/
+#content-wrapper {
+	position: relative;
+	height: 100%; /*Fills entire table cell*/
+	width: 400px;
+}
+
+#wrapper {
+	padding-left:10px;
+	height:100%;
+}
+
+#board-canvas {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	border-color:gray;
+	border:1px;
+	border-style:solid;
+}
+
+#arrow-canvas {
+	position: absolute;
+	z-index: 100;
+	pointer-events: none;
+}
+
+.checker {
+	position:relative;
+}
+
+.checker-png {
+	position: absolute;
+	height: 100%; /*Image fills entire table cell*/
+}
+
+td {
+	padding: 0;
+}
+
+#turn {
+	background-color: black;
+	text-align: center;
+	width:100%;
+}
+
+#turn-text {
+	display: inline;
+	background-color: transparent;
+	color: white;
+}
+
+#title {
+	width: 400px;
+	text-align: center;
+	font-size: 42px;
+	margin-bottom: 10px;
+	margin-left: 160px;
+}
+
+#scoreboard {
+	margin-bottom: 20px;
+}
+
+#left-scoreboard span,  #right-scoreboard span {
+	font-size: 30px;
+}
+
+#left-scoreboard, #right-scoreboard, #black-score, #red-score {
+	display:inline-block;
+}
+
+#left-scoreboard {
+	color: maroon;
+	padding-left: 100px;
+}
+
+#right-scoreboard {
+	padding-left: 100px;
+}
+
+.black {
+	color: black;
+}
+
+.red {
+	color:maroon;
+}
+
+.target-border {
+	border: 2px dashed black;
+}
+
+div#preload { 
+	display: none;
+}

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+
+<!--
+  COLLABORATORS: I did this assignment entirely on my own.
+
+  RESOURCES:
+  Grossman, Tovi, and Ravin Balakrishnan. "The bubble cursor: enhancing target acquisition by dynamic resizing of the cursor's activation area." Proceedings of the SIGCHI conference on Human factors in computing systems. ACM, 2005.
+  w3schools.com 
+  A couple StackOverflow sites that aren't worth mentioning because their solutions were too ineffienct, except for this site on how to do for loops with pauses:
+  http://stackoverflow.com/questions/14430060/how-to-delay-after-every-iteration-in-javascript-for-loop
+
+  To do my randomization, I used the Fisher-Yates shuffle
+  http://en.wikipedia.org/wiki/Fisher-Yates_shuffle#The_modern_algorithm
+  http://www.htmlblog.us/random-javascript-array
+
+  I'm using Foundation Reveal for Instructions.
+-->
+
+<meta name="description" content="UI 6.837 RS2">
+<meta name="author" content="Curtis Northcutt">
+<title>Bubble Cursor Experiment</title>
+<link rel="shortcut icon" href="favicon.ico">
+
+<!-- Load style sheets -->
+<link rel="stylesheet" type="text/css" href="rs2.css" />
+<link rel="stylesheet" href="css/foundation.css">
+
+<!-- Load any supplemental Javascript libraries here -->
+<script type="text/javascript" src="jquery/jquery-1.9.0.min.js"></script>
+<script src="js/vendor/custom.modernizr.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+
+<!-- Load main javascript here -->
+<script type="text/javascript" src="rs2.js"></script>
+<script type="text/javascript" src="circle.js"></script>
+
+</head>
+
+<body>
+  <div id = 'progress'>
+    trial: 1, set:1, block: 1
+  </div>
+  <div id="progressbar"></div>
+
+  <div id = 'page-content'>
+    <div id = 'left-panel'>
+      <h3>Instructions:</h3>
+      <p>Click the green goal when it is highlighted red. Select the goal as fast as possible.<p>
+      <h5>FOR REGULAR CURSOR:</h5>
+      <p>Move mouse over the goal to click it.</p>
+      <h5>FOR BUBBLE CURSOR:</h5>
+      <p>You can click whenever the goal is selected by the bubble.</p>
+    </div>
+    <div id = 'right-panel'>
+      <canvas id="bubble-canvas" height = "702" width = "702"></canvas>
+      <canvas id="bubble-closest-canvas" height = "702" width = "702"></canvas>
+      <canvas id="cursor-canvas" height = "702" width = "702"></canvas>
+    </div>
+  </div>
+
+  <div id="writing-hand" class="reveal-modal xlarge">
+    <h1>Thank you for participating in the cursor study!</h1>
+    <p>Are you left handed or right handed?</p>
+    <input class = "which-hand" id="leftHanded" type="button" value="Left"/>
+    <input class = "which-hand" id="rightHanded" type="button" value="Right"/>
+    <!--<a class="close-reveal-modal">&#215;</a>-->
+  </div>
+
+  <div id="input-device" class="reveal-modal xlarge">
+    <h1>Thank you for participating in the cursor study!</h1>
+    <p>Are you using a mouse or a trackpad?</p>
+    <input class = "which-hand" id="mouse" type="button" value="Mouse"/>
+    <input class = "which-hand" id="trackpad" type="button" value="Trackpad"/>
+    <!--<a class="close-reveal-modal">&#215;</a>-->
+  </div>
+
+  <div id="instructions" class="reveal-modal xlarge">
+    <h1>Instructions.</h1>
+    <p>A set of circles will be displayed. The goal is green.</p>
+    <p>Click your mouse/trackpad when the goal is highlighted in red. <p>
+    <p>Your task: Click the green goal as fast as you can in each trial.</p>
+    <h2>The first six trials are practice and will not be counted.<h2>
+    <input id="start-practice" type="button" value="Begin!"/>
+    <!--<a class="close-reveal-modal">&#215;</a>-->
+  </div>
+
+  <div id="practice-completed" class="reveal-modal large">
+    <p>Practice Set Completed. Time counts now. Click anywhere on the screen whenever you're ready.<p>
+    <a class="close-reveal-modal">&#215;</a>
+  </div>
+
+  <div id="set-completed" class="reveal-modal large">
+    <p>Trial Set Completed. Click anywhere on the screen whenever you're ready.<p>
+    <a class="close-reveal-modal">&#215;</a>
+  </div>
+
+  <div id="block-completed" class="reveal-modal large">
+    <p>Block Completed. Feel free to take a quick break.</p>
+    <p>Click anywhere on the screen whenever you're ready.<p>
+    <a class="close-reveal-modal">&#215;</a>
+  </div>
+
+  <div id="halfway-completed" class="reveal-modal large">
+    <p>You are halfway there! Feel free to take a quick break.</p>
+    <p>Let's try with a different kind of cursor.<p>
+    <h2>The first six trials are practice. After that, your times count!<h2>      
+    <input id="halfway" type="button" value="Begin!"/>
+  </div>
+
+  <div id="experiment-completed" class="reveal-modal large" data-options="closeOnBackgroundClick:false">
+    <h4>You have completed the Bubble Cursor challenge!</h4>
+    <p>Thank you so much for helping us in our study!<br>
+      Click the button below to export results.</p>     
+    <input style = "margin-bottom: 20px" id="export" type="button" value="Export Results."/>
+    <p>Rename the file to {your_name}.csv and email it to cgn@mit.edu<br>
+    Once you have emailed the csv file, <u>please complete the four question survey below:</u></p>
+    <a href="https://docs.google.com/forms/d/1FCP3nNfWCBrv0Eu4AwP6uJ8V2PXMMdhVCfdocfm69qw/viewform"><u>Post-task survey</u></a>
+  </div>
+
+  <div class="reveal-modal-bg" style="display: none"></div>
+
+<script>
+  document.write('<script src=' +
+  ('__proto__' in {} ? 'js/vendor/zepto' : 'js/vendor/jquery') +
+  '.js><\/script>')
+</script>
+<link href='http://fonts.googleapis.com/css?family=Raleway:400' rel='stylesheet' type='text/css'>
+<script src="js/foundation/foundation.js"></script>
+<script src="js/foundation/foundation.reveal.js"></script>
+<script>
+  $(document).foundation();
+</script>
+
+</body>
+
+</html>

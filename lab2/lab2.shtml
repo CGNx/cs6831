@@ -1,0 +1,851 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Lab 2: Javascript/jQuery</title>
+    <link rel="stylesheet" type="text/css" href="/6.831/6831.css">
+    <meta name="read-only" content="true">
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <meta name="author" content="none">
+    <link href="scripts/prettify.css" type="text/css" rel="stylesheet" />
+    <script type="text/javascript" src="scripts/prettify.js"></script>
+    <style>
+
+      .flush-right {
+      position:   relative;
+      float:      right;
+      margin:     1em;
+      margin-top:     0;
+      margin-bottom:  3em;
+      }
+
+      div.caption {
+      font-style: italic;
+      text-align: center;
+      }
+
+      .flush-right > img{
+      border: thin solid #a0a0a0;
+      }
+
+      p.due-info{
+      border: 1px solid rgb(160, 159, 129);
+      padding: 0.5em 1em;
+      background: rgb(250, 255, 226) none repeat scroll 0% 0%;
+      }
+
+      span.html-tag {
+      font-family: monospace;
+      font-size: smaller;
+      }
+
+      .figure {
+        border: 1px solid;
+        display: inline-block
+      }
+
+    </style>
+  </head>
+  <body onload="prettyPrint()">
+    <!--#include virtual="../../header.html"-->
+    <div id="body-pane">
+      <!--#include virtual="../../navigation.html"-->
+      <div id="content-box">
+
+        <h1>Lab 2: Javascript/jQuery</h1>
+
+        <p class="due-info">
+            This lab will be held on <b>Tuesday, February 12, 2013</b> at <b>7.30 P.M.</b> in <b>54-100.</b><br />
+             This is a non-compulsory programming lab to help students familiarize themselves with programming with Javascript and jQuery.
+          </p>
+
+        <p><b>Last Updated</b>: Mon, Feb 11 2013 at 11:45 P.M.</p>
+        
+
+        <p> In this programming lab, you will be completing a series of exercises that will help you implement functionality in your web-pages. You'll be  using the set of core technologies that drive most modern web applications, namely HTML, CSS, and Javascript. In most, we provide basic template of the application interface in the form of HTML and CSS files. Your job is to implement it using the behaviors and functionality using Javascript and jQuery.
+        </p>
+
+        <!-- Section: Required Resources -->
+        <h2>Required Resources</h2>
+        <p>You will need a a text editor, preferably with syntax highlighting. We recommend the following applications:</p>
+        <ul>
+
+          <li> Windows Users: 
+            <ul>
+              <li> <a 
+                  href="http://notepad-plus-plus.org/">
+                  Notepad++
+                  </a> 
+              </li>
+              <li> <a href="http://s3.amazonaws.com/alltom/theseus/Brackets-win.zip"> Brackets with special beta install of Theseus</a> (see below)</li>
+            </ul>
+          </li>
+          
+          <li> Mac Users: 
+            <ul>
+              <li> <a 
+                  href="http://www.barebones.com/products/textwrangler/">
+                  TextWrangler
+                  </a> 
+              </li>
+              <li> <a 
+                  href="http://http://www.sublimetext.com/">
+                  Sublime Text
+                  </a> 
+              </li>
+              <li> <a href="http://s3.amazonaws.com/alltom/theseus/Brackets-mac.zip"> Brackets, with special beta install of Theseus</a><br />
+                    Brackets allows live updating of HTML and CSS while you edit, and this version with Theseus is great for javascript debugging. (This is research code, in beta, and only approved for use in this class, please don't redistribute!)</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h2>Given Files</h2>
+        <p>Download the files required for this lab <a href="lab2.zip">here</a>.</a>
+
+        <h2>Exercise 1: Selecting Elements, Getting Values, and Setting Values</h2>
+        <p>
+          For this exercise, open up <code><a href="lab2_ex1.html">lab2_ex1.html<a/></code> in your internet browser. You should see the a page that looks something like this:
+        </p>
+        <div class="figure"><img src="figures/ex1-1.png" /></div>
+        <p>
+          Try clicking on the button named <b>Change!</b>. You will notice that it doesn't do anything currently. This is because our Javascript and jQuery code has not yet been put in place.
+        </p>
+        <p>
+          The desired behavior is when the button is clicked, all occurrences of the word <b>Blue</b> should be changed to the text specified in the input field. The input field currently has the world <b>Purple</b>.
+        </p>
+        
+       
+        <p>Now, open <code>lab2_ex1.html</code> in your text editor. Take a moment to understand HTML/CSS code that's present. Note that
+        </p>
+
+        <ul>
+          <li>The <b>Change!</b> button has the <code>id="button_change"</code></li>
+          <li>The input field has the <code>id="input_color"</code></li>
+          <li>All occurrences of the desired text to be replaced are enclosed within <code>&lt;span&gt;</code> tags, and have the <code>class="cow_color"</code>.
+        </ul>
+
+         <h3>Instructions</h3>
+
+        <p>You will need to:
+          <ol>
+            <li>Select the <b>Change!</b> button.</li>
+            <li>Set a click listener on the button to capture click events.</li>
+            <li>Retrieve and store the value currently in the input field.</li>
+            <li>Find and select all occurrences of the relevant text.</li>
+            <li>Replace the text with the stored value.</li>
+          </ol>
+        </p>
+        
+        <h3>Detailed Instructions</h3>
+
+        <h4>Step 1: Selecting the <b>Change!</b> button</h4>
+        <p>
+          First, you want some way to get the button element and assign it to a variable. Because the button has the <code>id="button_change"</code>, we can make use of jQuery's <a href="http://api.jquery.com/id-selector/">ID Selector</a>. Thus, write the following line.
+        </p>
+
+        <!-- <div class="figure"><img src="figures/ex1-3.png" /></div>-->
+        <pre class="prettyprint lang-js">
+var button = $("#button_change");
+        </pre>
+
+        <p>
+        Be sure to include the <b>#</b> symbol. This ensures you are selecting the element with <code>id="button_change"</code>.
+        </p>
+
+        <h4>Step 2: Setting a click listener</h4>
+          <p>
+          Next, we want to attach a listener for clicks on the button. As such, we will make use of jQuery's <a href="http://api.jquery.com/click/"><code>.click()</code></a> method. Attaching the listener to the button should be done as follows:
+        </p>
+
+        <!--<div class="figure"><img src="figures/ex1-4.png" /></div>-->
+        <pre class="prettyprint lang-js">
+$(button).click(function() {
+  // Actions to take upon button click goes here.
+       
+});
+        </pre>
+
+        <h4>Step 3: Retrieving and storing the input value</h4>
+        <p>
+          In order to retrieve the text currently in the input field, we will first need to use the ID Selector, as we did in Step 1, but with <code>id="input_color"</code>. Next, we will make use of jQuery's <a href="http://api.jquery.com/val/">.val()</a> method to retrieve the current entered text in the input field. So, next add in the following two lines, making sure that they are in the click function.
+        </p>
+
+        <!--<div class="figure"><img src="figures/ex1-5.png" /></div>-->
+        <pre class="prettyprint lang-js">
+var input = $("#input_color");
+var inputValue = $(input).val();
+        </pre>
+
+        <p>
+          It is worth noting that you can actually perform the same action without the use of the <code>input</code> variable as follows:
+        </p>
+
+        <!--<div class="figure"><img src="figures/ex1-6.png" /></div>-->
+        <pre class="prettyprint lang-js">
+var inputValue = $("#input_color").val();
+        </pre>
+
+        <h4>Step 4: Select all appropriate text</h4>
+        <p>
+          We know that all the text to be replace are within <code>&lt;span&gt;</code> elements, and have the <code>class="cow_color"</code>. Instead of using the ID Selector, this time we make use of the jQuery <a href="http://api.jquery.com/class-selector/">Class Selector</a>. Note the similarity with the jQuery <a href="http://api.jquery.com/id-selector/">ID Selector</a>, except that instead of the hash symbol <b>#</b>, we use the period <b>.</b> symbol. So, add the following line to your function:
+        </p>
+
+        <!--<div class="figure"><img src="figures/ex1-7.png" /></div>-->
+        <pre class="prettyprint lang-js">
+var element = $(".cow_color");
+        </pre>
+
+        <h4>Step 5: Replace the text with the stored value</h4> 
+        <p>
+          Finally, we replace the elements with the <code>class="cow_color"</code> from Step 4 with the value we retrieved from the input in Step 3. In order to perform the replacement, we essentially need to replace the contents between the tags <code>&lt;span&gt;</code> <code>&lt;/span&gt;</code>. This is done using jQuery's <a href="http://api.jquery.com/html/">.html()</a> method. Thus, add the following line to your function:
+        </p>
+
+        <!--<div class="figure"><img src="figures/ex1-8.png" /></div>-->
+        <pre class="prettyprint lang-js">
+$(element).html(inputValue);
+        </pre>
+
+        <p>
+          When you complete this step, you should be done. Test the functionality of the application by saving and reloading <code>lab2_ex1.html</code> in your browser. Press the <b>Change!</b> button, and you should see both occurrences of the word <b>Blue</b> in the text get changed to <b>Purple</b>.
+        </p>
+
+        <h2>Exercise 2: Attributes, Classes and CSS Manipulation</h2>
+        <p>
+          For this exercise, open up <code><a href="lab2_ex2.html">lab2_ex2.html<a/></code> in your internet browser. You should see the a page that looks something like this:
+        </p>
+         <div class="figure"><img src="figures/ex2-1.png" /></div>
+       <p>
+         Try clicking on any of the three buttons on the page. You will notice that none of them do anything currently. This is because our Javascript and jQuery code has not yet been put in place. 
+       </p>
+       <p>
+         The desired behavior for each of the buttons are:
+         <ul>
+           <li><b>Toggle Colors</b>: Toggles the color between white and cardinal.</li>
+           <li><b>Toggle Rounded Borders</b>: Toggles the appearance of a border on the boxes.</li>
+           <li><b>Add a New Box</b>: Adds one new box to the container.</li>
+         </ul>
+       </p>
+       
+       <p>Now, open <code>lab2_ex2.html</code> in your text editor. Take a moment to understand HTML/CSS code that's present. Note that
+       </p>
+
+       <ul>
+        <li> The <code>&lt;div&gt;</code> with <code>id="boxes"</code> contains three boxes. </li>
+        <li> Each of the boxes are of <code>class="box"</code>.
+        <li> The <code>&lt;div&gt;</code> with <code>id="toggles"</code> contains three buttons.</li>
+        <ul>
+          <li>Button <code>id="button_toggle_colors"</code> should toggles the color of the boxes</li>
+          <li>Button <code>id="button_toggle_roundedges"</code> should toggle the rounded borders of the boxes </li>
+          <li>Button <code>id="button_add_box"</code> should add an additional box </li>
+        </uL>
+       </ul>
+
+       <p>
+          We have already added in the <code>.click()</code> listeners for each of the buttons for you. Your job is to fill in the code within those listeners. You may refer to Exercise 1 to refresh your memory about jQuery button click listeners.
+       </p>
+
+        <h3>Instructions</h3>
+
+       <p>You will need to:
+         <ol>
+           <li>Add the <code>outlined</code> CSS class to each of the 3 boxes.</li>
+           <li>Modify the <code>background-color</code> CSS attribute on the boxes whenever the <b>Toggle Colors</b> button is clicked.</li>
+           <li>Add/Remove the <code>round-edge</code> class on the boxes whenever the <b>Toggle Rounded Borders</b> button is clicked.</li>
+           <li>Add a new box <code>&lt;div&gt;</code> whenever the <b>Add new box</b> button is clicked. </li>
+         </ol>
+       </p>
+       
+       <h3>Detailed Instructions</h3>
+
+       <h4>Step 1: Adding a CSS class manually</h4>
+       <p>
+        We want there to be borders around all our boxes, and in this step we do this using a manual process. We have already created a CSS class named <code>outlined</code> for you, so we need to add that class to each box <code>&lt;div&gt;</code>. This is done by adding the string <code>outlined</code> to the class attribute of the boxes, after the <code>box</code> string. Remember to include a space between the two words. You should end up with the following code.
+       </p>
+
+       <pre class="prettyprint lang-html">
+&lt;div id=&quot;box1&quot; class=&quot;box outlined&quot;&gt;&lt;/div&gt;
+&lt;div id=&quot;box2&quot; class=&quot;box outlined&quot;&gt;&lt;/div&gt;
+&lt;div id=&quot;box3&quot; class=&quot;box outlined&quot;&gt;&lt;/div&gt;
+       </pre>
+
+       <p>
+        Refresh the page, and you should now see the following:
+       </p>
+       <div class="figure"><img src="figures/ex2-2.png" /></div>
+
+              <h4>Step 2: Modifying CSS attributes with <code>.css()</code> </h4>
+       
+       <p>
+        We will now handle the button that changes the boxes' background color. We have already created the color <code>colorCardinal</code> which we would like to color the boxes with. We'd like to take an approach to accomplish this task which doesn't involve the use of CSS classes, and instead modifies the CSS templates of an element directly.
+       </p>
+       <p>
+        Locate the button click listener for the <code>id="button_toggle_color"</code> button. Once again, we will need to to use a jQuery <a href="http://api.jquery.com/class-selector/">Class Selector</a> and and the jQuery <code><a href="http://api.jquery.com/jQuery.each/">.each()</a></code> method to select all elements with the CSS class <code>box</code>,  on the selector. You should add the the code and have the following:
+       </p>
+              <pre class="prettyprint lang-js">
+$(&quot;#button_toggle_color&quot;).click(function() {
+&nbsp;&nbsp;$(&quot;.box&quot;).each(function () { 
+&nbsp;&nbsp; 
+&nbsp;&nbsp;});
+});
+              </pre>
+        <p>
+        Next, we want to check if the element has the CSS attribute <code>background-color</code> with a value of <code>colorCardinal</code>. We make use of the jQuery method <code><a href="http://api.jquery.com/attr/">.css()</a></code> to check the current value of the element's CSS value.
+       </p>
+<pre class="prettyprint lang-js">
+if ($(this).css('background-color') == colorCardinal) {
+    // element currently has cardinal background color
+    // remove it
+
+}
+else {
+    // element currently has the no background color
+    // add it
+
+}
+</pre>
+        <p>
+          We made use of the <code><a href="http://api.jquery.com/css/">.css()</a></code> method, with one argument, to check the value of an element's CSS attribute. In order to set the value, we use the same method, but include a second argument to specify the value to set the CSS value to. 
+        </p>
+
+<pre class="prettyprint lang-js">
+if ($(this).css('background-color') == colorCardinal) {
+    // element currently has cardinal background color
+    // remove it
+    $(this).css('background-color', '');
+}
+else {
+    // element currently has the no background color
+    // add it
+    $(this).css('background-color', colorCardinal);
+}
+</pre>
+
+       <h4>Step 3: Adding/Removing classes using jQuery's <code>.addClass()</code> and <code>.removeClass()</code></h4>
+       <p>
+         In step 2, we modified CSS templates directly, which can get unwieldy when you have to get, check and set multiple values each time. This is why we make use of CSS classes to define how we want certain elements to look, and subsequently attach them to the relevant elements. This is what we did in in step 1 where we added the class <code>outlined</code> to the <code>&lt;div&gt;</code> elements manually. The method introduced in step 1 is a manual process, and one can see how this becomes unfeasible with many elements.Also, what we want is to procedurally toggle the classes on the elements when the appropriate buttons are clicked. As such, we shall use jQuery to achieve these aims.
+       </p>
+       <p>
+        We will now handle the button that changes the boxes' border style from straight-edges to round-edges.. We have already created the CSS class named <code>round-edge</code> for you. What we want to do is to add the <code>round-edge</code> class to each of the boxes if they do not have them, which would cause them to be have rounded edges. If a box already has the <code>round-edge</code> class, we remove it.
+       </p>
+      
+       <p>
+        Locate the button click listener for the <code>id="button_toggle_roundedges"</code> button. The first thing we will need to do is to use a jQuery <a href="http://api.jquery.com/class-selector/">Class Selector</a> to select all elements with the CSS class <code>box</code>. Because we want to manipulate each element, we will need to make use of the jQuery method <code><a href="http://api.jquery.com/jQuery.each/">.each()</a></code> on the selector. Type the following into the <code>.click()</code> listener:
+       </p>
+
+              <pre class="prettyprint lang-js">
+$(&quot;.box&quot;).each(function () { <br />
+
+});
+              </pre>
+        <p>
+          Take a moment to understand what's happening with this code. The selector <code class="prettyprint lang-js">$(".box")</code> is a <a href="http://api.jquery.com/class-selector/">Class Selector</a> which selects all the elements with the CSS class <code>box</code> assigned to it. The <code class="prettyprint lang-js">.each()</code> method acts as an iterator, such that any code that we put within the <code class="prettyprint lang-js">function()</code> block affects the individual elements. 
+      
+          Within the <code class="prettyprint lang-js">function ()</code> in the <code class="prettyprint lang-js">.each()</code> method, we can access the element we are currently affecting using the <code class="prettyprint lang-js">$(this)</code> method. You probably have seen similar mechanisms for self-reference in other programming languages such as <code class="prettyprint lang-java">this</code> in Java or <code class="prettyprint lang-python">self</code> in Python.
+        </p>
+        <p>
+          The first thing is to detect if the current element has the <code>cardinal</code> class assigned to it already. We use the jQuery method <code class="prettyprint lang-java"><a href="http://api.jquery.com/hasClass/">.hasClass()</a></code> method to do so. So, add the following code within the <code class="prettyprint lang-js">function ()</code>:
+        </p>
+                      <pre class="prettyprint lang-js">
+if ($(this).hasClass('round-edge')) {
+ // element currently has rounded edges
+ // remove it
+}
+else {
+&nbsp;&nbsp;// element does not have rounded edges
+&nbsp;&nbsp;// add it
+} 
+                      </pre>
+        <p>
+          Finally, we need to fill in the code for each of the two cases. For the first case, the element already has the <code>cardinal</code> class assigned to it, so we make use of the jQuery <code class="prettyprint lang-java"><a href="http://api.jquery.com/removeClass/">.removeClass()</a></code> method to remove the cardinal class from the element. For the second case, the opposite case is true, meaning that the element does not have the <code>cardinal</code> class. We make use of the jQuery <code class="prettyprint lang-java"><a href="http://api.jquery.com/addClass/">.addClass()</a></code> method to add the <code>cardinal</code> class to it. Your code should look like this:
+        </p>
+
+                              <pre class="prettyprint lang-js">
+if ($(this).hasClass('round-edge')) {
+  // element currently has rounded edges
+  // remove it
+  $(this).removeClass('round-edge');
+}
+else {
+  // element does not have rounded edges
+  // add it
+  $(this).addClass('round-edge');
+} 
+                      </pre>
+        <p>It is worth noting that this is a verbose way of performing toggle functionality. To leverage the power of jQuery even more, you can actually make use of the jQuery <code><a href="http://api.jquery.com/toggleClass/">.toggleClass()</a></code> method to achieve everything you did in the previous steps. In other word, the entire <code>if-else</code> block can be replaced with just the following line of code:
+        </p>
+
+        <pre class="prettyprint lang-js">
+$(this).toggleClass('round-edge');
+        </pre>
+
+        <p> This line of code does everything we want it to do. It checks for the presence of a class on an element, and removes it if it is already present. If not, it adds it. This showcases the power of using jQuery and CSS classes.
+        </p>
+
+      <h4>Step 4: Adding new elements </h4>
+      <p>
+       In our final step, we will show how to dynamically add elements to your web interface using a combination of Javascript and jQuery. With the <b>Add a New Box</b> button, it needs to create a box similar to what we had originally. This is achieved by creating a new <code>&lt;div&gt;</code> element. However, to be a box, it needs to have the classes <code>outlined</code> and <code>box</code>.
+      </p>
+      <p>
+       Locate the button click listener for the <code>id="button_add_box"</code> button. Within the listener, we need to create a new <code>&lt;div&gt;</code> element. This is achieved by using Javascript's <code class="prettyprint lang-js">document.createElement()</code> method. Add the following line into the listener method
+      </p>
+      <pre class="prettyprint lang-js">
+var new_box = document.createElement('div');
+      </pre>
+      <p>
+        First, we need to set the attribute <code>id</code> for the new box. We currently have three boxes, so we would like the next one to have <code>id="box4"</code>, and the next <code>id="box5"</code> and so on. We simply need to count the number of existing <code>box</code> <code>&lt;div&gt;</code>s in the document. We first can use a jQuery <a href="http://api.jquery.com/class-selector/">Class Selector</a> to get all the required elements, and then make use of the jQuery field <code><a href="http://api.jquery.com/length/">.length</a></code> to get the number of elements.
+      </p>
+
+            <pre class="prettyprint lang-js">
+var new_box = document.createElement('div');
+var existingBoxes = $(".box").length;
+            </pre>
+      <p>
+        We thus just need to set the <code>id</code> attribute of the new box by using the jQuery <a href="http://api.jquery.com/attr/"><code>.attr()</code></a> method to set the <code>id</code> attribute of the new box.
+      </p>
+            <pre class="prettyprint lang-js">
+var new_id = existingBoxes+1;
+$(new_box).attr("id", new_id);
+            </pre>
+      <p>
+        Next, we want to add the two classes, <code>box</code> and <code>outlined</code> to the new box. We once again make use of the <code class="prettyprint lang-java"><a href="http://api.jquery.com/addClass/">.addClass()</a></code> method.
+      </p>
+
+      <pre class="prettyprint lang-js">
+$(new_box).addClass("box");
+$(new_box).addClass("outlined");
+      </pre>
+
+      <p> Finally, to add the new <code>&lt;div&gt;</code> we just created for the new box to the current list of boxes, we use an <a href="http://api.jquery.com/id-selector/">ID Selector</a> first to find the element <code>boxes</code>, and then use the jQuery <code><a href="http://api.jquery.com/append/">.append()<a/></code> method to add the new box.
+      </p>
+      <pre class="prettyprint lang-js">
+ $("#boxes").append(new_box);
+      </pre>
+
+      <h3>Testing</h3>
+      <p>You should now test your implementation to make sure that everything works correctly. Perform the following steps, and your set of boxes should resemble the output we present.
+      </p>
+      <h2>Perform the following</h2>
+      <ol>
+        <li>Click Toggle Colors</li>
+        <li>Click Add a New Box</li>
+        <li>Click Add a New Box</li>
+        <li>Click Add a New Box</li>
+        <li>Click Toggle Colors</li>
+        <li>Click Add a New Box</li>
+        <li>Click Add a New Box</li>
+        <li>Click Add a New Box</li>
+        <li>Click Toggle Rounded a Corners</li>
+      </ol>
+
+      <p>
+        If you follow the above steps, your output should resemble the following image.
+      </p>
+
+      <div class="figure"><img src="figures/ex2-3.png" /></div>
+
+      <h2>Exercise 3: jQuery UI</h2>
+    <p>
+      For this exercise, open up <code><a href="lab2_ex3.html">lab2_ex3.html<a/></code> in your internet browser. You should see the a page that looks something like this:
+    </p>
+    <div class="figure"><img src="figures/ex3-1.png" /></div>
+    <p>
+      Notice that this link contains a pretty boring survey which is not very user friendly. This exercise will step you through a number of improvements to make the front end of the survey better using the <a href="http://www.jQueryUI.com">jQuery UI library</a>. The jQuery UI library contains code for performing UI interactions as well as useful widgets and effects. In addition, you can easily define CSS themes to color these different widgets using the <a href="http://jqueryui.com/themeroller">ThemeRoller</a>.
+    </p>
+    <p>
+      We will be seeking to make a page that looks like this:
+    </p>
+    <div class="figure"><img src="figures/ex3-2.png" /></div>
+
+    <p>
+      Now, open <code>lab2_ex3.html</code> in your text editor. Take a moment to understand HTML/CSS code that's present. Note that
+    </p>
+    
+    <ul>
+      <li>We now also have the jQuery UI JavaScript file for functionality, as well as the CSS file for jQuery UI styling (which uses a number of images, also included in the jquery folder).</li>
+      <li>There exists a text box to input a date in a <code>&lt;div&gt;</code> with id <code>date_input</code>.
+      <li>There exist radio buttons to determine whether the user is an undergraduate or a graduate in a <code>&lt;div&gt;</code> with id <code>year_input</code>.
+      <li> There exists a series of inputs to rank the color options given.
+      <li> There are places in the form where there is a lot of extra information in parentheses. There are also places where not enough information is given to discern options (ex: colors).
+    </ul>
+
+    <h3>Instructions</h3>
+    
+    <p>You will need to:
+      <ol>
+        <li>Add <a href="http://jqueryui.com/datepicker/">Datepicker</a> for selecting dates.</li>
+        <li>Use the <a href="http://jqueryui.com/selectable/">Selectable</a> interaction for selecting year.</li>
+        <li>Use the <a href="http://jqueryui.com/sortable/">Sortable</a> widget to allow draggable color rankings.</li>
+  <li>Use the <a href="http://jqueryui.com/tooltip/">Tooltip</a> widget to add extra information to year/color options</li>
+      </ol>
+    </p>
+
+      <h2>Exercise 3: jQuery UI</h2>
+	<p>
+	  For this exercise, open up <code><a href="lab2_ex3.html">lab2_ex3.html<a/></code> in your internet browser. You should see the a page that looks something like this:
+	</p>
+	<div class="figure"><img src="figures/ex3-1.png" /></div>
+	<p>
+	  Notice that this link contains a pretty boring survey which is not very user friendly. This exercise will step you through a number of improvements to make the front end of the survey better using the <a href="http://www.jQueryUI.com">jQuery UI library</a>. The jQuery UI library contains code for performing UI interactions as well as useful widgets and effects. In addition, you can easily define CSS themes to color these different widgets using the <a href="http://jqueryui.com/themeroller">ThemeRoller</a>.
+	</p>
+	<p>
+	  We will be seeking to make a page that looks like this:
+	</p>
+	<div class="figure"><img src="figures/ex3-2.png" /></div>
+	
+	<p>
+	  Now, open <code>lab2_ex3.html</code> in your text editor. Take a moment to understand HTML/CSS code that's present. Note that
+	</p>
+	
+	<ul>
+	  <li>We now also have the jQuery UI JavaScript file for functionality, as well as the CSS file for jQuery UI styling (which uses a number of images, also included in the jquery folder).</li>
+	  <li>There exists a text box to input a date in a <code>&lt;div&gt;</code> with id <code>date_input</code>.
+	  <li>There exist radio buttons to determine whether the user is an undergraduate or a graduate in a <code>&lt;div&gt;</code> with id <code>year_input</code>.
+	  <li> There exists a series of inputs to rank the color options given.
+	  <li> There are places in the form where there is a lot of extra information in parentheses. There are also places where not enough information is given to discern options (ex: colors).
+	</ul>
+
+	<h3>Instructions</h3>
+	
+	<p>You will need to:
+	  <ol>
+            <li>Add <a href="http://jqueryui.com/datepicker/">Datepicker</a> for selecting dates.</li>
+            <li>Use the <a href="http://jqueryui.com/selectable/">Selectable</a> interaction for selecting year.</li>
+            <li>Use the <a href="http://jqueryui.com/sortable/">Sortable</a> widget to allow draggable color rankings.</li>
+	    <li>Use the <a href="http://jqueryui.com/tooltip/">Tooltip</a> widget to add extra information to year/color options</li>
+	  </ol>
+	</p>
+	
+	<h4>Step 1: Inserting Datepicker into Date Input</h4>
+	<p>
+	  For the date input, we will be using <a href="http://jqueryui.com/datepicker/">Datepicker</a> widget. The nice thing about jQuery UI is that it takes very little code to get each of the widgets up and running. To bring up a calendar to select dates when the date input (<code>id="date"</code>) gets focussed, you simply have to add the following code to the <code>document.ready</code> function:
+	</p>
+	<pre class="prettyprint lang-js">
+$("#date").datepicker();
+	</pre>
+	<p>
+	  However, you can easily augment the datepicker with more options. Say, for example, you wanted to limit the selectable date range to only include dates from the previous two weeks to the next two weeks. We could then initialize our datepicker one of the following ways:
+	</p>
+	<pre class="prettyprint lang-js">
+//Using numeric offsets
+$("#date").datepicker({minDate:-14, maxDate: 14});
+//Using string offsets
+$("#date").datepicker({minDate:"-2W", maxDate: "+14D"});
+//Using actual dates (note that months are indexed by zero)
+$("#date").datepicker({minDate:(new Date(2013, 0, 28)), maxDate:(new Date(2013, 1, 25)) });
+	</pre>
+	<p>
+	  If you have time, take a look at the <a href="http://jqueryui.com/datepicker/">Datepicker</a> page to see other ways you can use this widget.
+	</p>
+
+	<h4>Step 2: Using Selectable for Year Input</h4>
+	<p>
+	  Next, we will use the <a href="http://jqueryui.com/selectable/">Selectable</a> class instead of radio buttons for selecting Undergraduate/Graduate. However, our current html approach will have to be rewritten using an ordered list instead of input elements. Note the addition of the <code>selectable</code> id and the <code>ui-widget-content</code> class. The class on the list elements in particular utilizes one of the css classes provided in the jQuery UI css file.
+	</p>
+	<pre class="prettyprint lang-html">
+&lt;ol id=&quot;selectable&quot;&gt;
+  &lt;li class=&quot;ui-widget-content&quot;&gt;Undergraduate (taking 6.813, doesn't have to do RS assignments)&lt;/li&gt;
+  &lt;li class=&quot;ui-widget-content&quot;&gt;Graduate (taking 6.831, required to do RS assignments)&lt;/li&gt;
+&lt;/ol&gt;
+	</pre>
+	<p> 
+	  Next we add the JavaScript code to initialize the Selectable. Note how the initial setup is just as simple as the Datepicker:
+	</p>
+	<pre class="prettyprint lang-js">
+$("#selectable").selectable();
+	</pre>
+	<p>
+	  Refresh the page. It's starting to look slightly better, but it isn't entirely there yet. Open up the debugging console and inspect the list elements as you're clicking on them. Note that whichever option is selected gets the class <code>ui-selected</code>, and if you hold your mouse down on an option it gains the class <code>ui-selecting</code>. We can use this to write CSS to style our selectable! In addition, we will add some extra CSS to remove the list numbers as well as tweak the margins/padding/font size (style taken from jQuery UI sample Selectable page):
+	</p>
+	<pre class="prettyprint lang-css">
+#selectable .ui-selecting { 
+   background: #FECA40; 
+}
+#selectable .ui-selected { 
+   background: #F39814; 
+   color: white; 
+}
+#selectable { 
+   list-style-type: none; 
+   margin: 0; 
+   padding: 0; 
+   width: 60%; 
+}
+#selectable li { 
+   margin: 3px; 
+   padding: 0.4em; 
+   font-size: 1.0em; 
+   height: 12px; 
+}
+      </pre>
+      <p>
+  Note that you can get the text of the selected element with the following code:
+      </p>
+      <pre class="prettyprint lang-js">
+$(".ui-selected").text()
+	</pre>
+
+	<h4>Step 3: Using Sortable for Color Input</h4>
+	<p>
+	  Now we will use the <a href="http://jqueryui.com/sortable/">Sortable</a> interaction to provide a simpler UI for ranking colors. Like we previously did with the Selectable, we will need to rewrite the html in terms of a list, only this time, we will use an unordered list. Again, we are adding a css class defined in the jQuery UI CSS to each of the list elements:
+	</p>
+	<pre class="prettyprint lang-html">
+&lt;ul id=&quot;sortable&quot;&gt;
+  &lt;li class=&quot;ui-state-default&quot;&gt;#ff0000&lt;/li&gt;
+  &lt;li class=&quot;ui-state-default&quot;&gt;#0000ff&lt;/li&gt;
+  &lt;li class=&quot;ui-state-default&quot;&gt;#ff00b3&lt;/li&gt;
+  &lt;li class=&quot;ui-state-default&quot;&gt;#ded447&lt;/li&gt;
+  &lt;li class=&quot;ui-state-default&quot;&gt;#125e18&lt;/li&gt;
+&lt;/ul&gt;
+	</pre>
+	<p>
+	  Next, we will initialize the Sortable using JavaScript. To prevent the user from accidentally selecting text during a drag operation, we will also add a line of code that prevents the user from selecting the text.
+	</p>
+	<pre class="prettyprint lang-js">
+$("#sortable").sortable();
+$("#sortable").disableSelection();
+	</pre>
+	<p>
+	  Refresh the page. You should now be able to drag the elements around. However, they are not yet fully styled. As before, open up the debugging console and inspect the elements of the sortable list. Pick up, drag, and drop elements, noting the different classes that are added to the elements. For now, we will just apply some basic styling to the sortable list and list elements (style taken from jQuery UI sample Sortable page):
+	</p>
+	<pre class="prettyprint lang-css">
+#sortable { 
+   list-style-type: none; 
+   margin: 0; 
+   padding: 0; 
+   width: 60%; 
+}
+#sortable li { 
+   margin: 0 3px 3px 3px; 
+   padding: 0.4em; 
+   padding-left: 1.5em; 
+   font-size: 1.0em; 
+   height: 12px; 
+}
+	</pre>
+	
+	<p>
+	  At this point, we are almost done. However, we want to clue the user into draggable sorting by adding an icon to each of our sortable elements. Luckily, jQuery UI has <a href="http://jquery-ui.googlecode.com/svn/tags/latest/tests/static/icons.html">plenty of symbols</a> to help us out with that task. In this case, we want the double-ended vertical arrow to indicate sorting. To add this, we first augment our list elements with an additional <code>&lt;span&gt;</code> element. To make the icon show up, we give the <code>&lt;span&gt;</code> the class for the desired icon (you can find out the class of other icons by inspecting the elements on the <a href="http://jquery-ui.googlecode.com/svn/tags/latest/tests/static/icons.html">jQuery UI icon page</a>):
+	</p>
+	<pre class="prettyprint lang-html">
+&lt;ul id=&quot;sortable&quot;&gt;
+  &lt;li class=&quot;ui-state-default&quot;&gt;&lt;span class=&quot;ui-icon ui-icon-arrowthick-2-n-s&quot;&gt;&lt;/span&gt;#ff0000&lt;/li&gt;
+  &lt;li class=&quot;ui-state-default&quot;&gt;&lt;span class=&quot;ui-icon ui-icon-arrowthick-2-n-s&quot;&gt;&lt;/span&gt;#0000ff&lt;/li&gt;
+  &lt;li class=&quot;ui-state-default&quot;&gt;&lt;span class=&quot;ui-icon ui-icon-arrowthick-2-n-s&quot;&gt;&lt;/span&gt;#ff00b3&lt;/li&gt;
+  &lt;li class=&quot;ui-state-default&quot;&gt;&lt;span class=&quot;ui-icon ui-icon-arrowthick-2-n-s&quot;&gt;&lt;/span&gt;#ded447&lt;/li&gt;
+  &lt;li class=&quot;ui-state-default&quot;&gt;&lt;span class=&quot;ui-icon ui-icon-arrowthick-2-n-s&quot;&gt;&lt;/span&gt;#125e18&lt;/li&gt;
+&lt;/ul&gt;
+	</pre>
+	<p>
+	  Finally, we style the icons with some CSS:
+	</p>
+	<pre class="prettyprint lang-css">
+#sortable li span { 
+   position: absolute; 
+   margin-left: -1.3em; 
+}
+	</pre>
+
+	<h4>Step 4: Using Tooltips for Clarification</h4>
+	<p>
+	  Note how our Selectable elements have a lot of extra text and our Sortable colors could use some visual clarification. For this, we are going to experiment with the <a href="http://jqueryui.com/tooltip/">Tooltip</a> widget. First, we'll add clarification tooltips for the Selectables. 
+	</p>
+	<p>
+	  To do this, we will first slightly alter the html by putting the extra text in parentheses into the <code>title</code> property of the element:
+	</p>
+	<pre class="prettyprint lang-html">
+&lt;ol id=&quot;selectable&quot;&gt;
+  &lt;li class=&quot;ui-widget-content&quot; title=&quot;taking 6.813, doesn't have to do RS assignments&quot;&gt;Undergraduate&lt;/li&gt;
+  &lt;li class=&quot;ui-widget-content&quot; title=&quot;taking 6.831, required to do RS assignments&quot;&gt;Graduate&lt;/li&gt;
+&lt;/ol&gt;
+	</pre>
+	<p>
+	  Then, all we have to do to get the tooltips to show up is to add the following js code:
+	</p>
+	<pre class="prettyprint lang-js">
+$(document).tooltip()
+	</pre>
+	<p>
+	  We will need to do something a little more complicated to get tooltip color swatches for the Sortable colors. In this case, we will have the tooltip contain a 50px by 50px <code>&lt;div&gt;</code> that matches the color of the selection (Note: there are definitely better ways to do this than with a popup <code>&lt;div&gt;</code>--we use this example to illustrate custom tooltip content only).
+	</p>
+	<p>
+	  The <code>tooltip</code> function can take in an object that defines a number of properties. In this case, we will define the <code>items</code> that will have a tooltip and the <code>content</code> that the tooltip will contain. We will trigger the tooltip when an element has a <code>title</code> defined or a <code>class</code> defined (we will have another check later on to narrow down to the particular class of elements--in this case, we want <code>ui-state-default</code>, the class of the Sortable colors). For the <code>content</code>, we will define a function that will return what the tooltip should contain. If the element has a <code>title</code>, we will simply fill the tooltip with the text of the title. If the element has a <code>class</code> and that class is <code>ui-state-default</code>, then we will fill the tooltip with a div that has a background color equal to the text of the element (conveniently a hexadecimal color). This is accomplished by replacing your simple tooltip code with the following:
+	</p>
+	<pre class="prettyprint lang-js">
+$(document).tooltip({
+   /* 
+      An item in brackets refers to taking all elements with the attribute in brackets, while
+      an item not in brackets refers to taking all elements of that type (ex: 'img', 'a')
+   */
+   items: "[title], [class]",
+   content: function() {
+      // jQuery uses "this" to refer to the element that triggered the event
+      var element = $(this);
+      if (element.is("[title]")){
+         return element.attr("title");
+      }
+      if (element.is("[class]")){
+         if (element.attr("class") == "ui-state-default") {
+            var text = element.text(); //in this case, will be the desired color
+            return &quot;&lt;div class='color_swatch' style='background:&quot; + text + &quot;'&gt;&lt;/div&gt;&quot;;
+         }
+      }
+   }
+});
+	</pre>
+	<p>
+	Refresh the page. You should be able to see tooltips pop up on all desireable elements now. However, the color swatches aren't showing up in the tooltips! This is because our <code>&lt;div&gt;</code> elements do not yet have a size. Add the following line of CSS to make the <code>&lt;div&gt;</code> 50px by 50px:
+	</p>
+
+	<pre class="prettyprint lang-css">
+.color_swatch{ 
+   height: 50px; 
+   width: 50px; 
+} 
+	</pre>
+
+	<p>
+	  Now, after refreshing the page, your tooltips should all show up on the page. If you are unhappy with the position of your tooltips when they pop up, take a look at the <a href="http://api.jqueryui.com/tooltip/#option-position">documentation</a> for setting the position of the toolips.
+	</p>
+
+	<h2>Exercise 4: Canvas Manipulation</h2>
+        <p>
+          For this exercise, open up <code><a href="lab2_ex4.html">lab2_ex4.html<a/></code> in your internet browser. You should see the a page that looks something like this:
+        </p>
+         <div class="figure"><img src="figures/ex4-1.png" /></div>
+       <p>
+         Try clicking on any of the three buttons on the page. You will notice that none of them do anything currently. This is because our Javascript and jQuery code has not yet been put in place. 
+       </p>
+       <p>
+         The desired behavior for each of the buttons are:
+         <ul>
+           <li><b>Draw Triangle</b>: Draw a red triangle with black outline onto the canvas.</li>
+     <div class="figure"><img src="figures/ex4-2.png" /></div>
+           <li><b>Draw Rotated Triangle</b>: Draws the same triangle as <b>Draw Triangle</b>, but rotated by 45 degrees.</li>
+     <div class="figure"><img src="figures/ex4-3.png" /></div>
+           <li><b>Clear Canvas</b>: Clears the canvas.</li>
+         </ul>
+       </p>
+       
+       <p>Now, open <code>lab2_ex4.html</code> in your text editor. Take a moment to understand HTML/CSS code that's present. Note that
+       </p>
+
+       <ul>
+        <li> The <code>&lt;canvas&gt;</code> with <code>id="myCanvas"</code> is 300px by 300px. </li>
+        <ul>
+          <li>Button <code>id="button_draw_triangle"</code> should draw the triangle with the dimensions specified above.</li>
+          <li>Button <code>id="button_draw_rotated_triangle"</code> should draw the triangle with the dimensions specified above, but rotated by 45 degrees </li>
+          <li>Button <code>id="button_clear_canvas"</code> should clear the canvas </li>
+        </ul>
+       </ul>
+
+       <h3>Instructions</h3>
+       
+    <p>You will need to:
+      <ol>
+        <li>Get the context of the <code>&lt;canvas&gt;</code> for drawing.</li>
+        <li>Draw a red triangle with black outline when the <b>Draw Triangle</b> button is clicked.</li>
+        <li>Draw a rotated red triangle with black outline when the  <b>Draw Rotated Triangle</b> button is clicked.</li>
+        <li>Clear the <code>&lt;canvas&gt;</code> when the <b>Clear Canvas</b> button is clicked. </li>
+      </ol>
+    </p>
+
+       <h4>Step 1: Getting the context for the Canvas</h4>
+       <p>
+   You can think of the <code>&lt;canvas&gt;</code> as a container for graphics--it doesn't have any drawing capabilities on its own. In order to draw to the <code>&lt;canvas&gt;</code>, you need get a <code>context</code>. The <code>context</code> itself is an object that contains methods and properties for drawing to the <code>&lt;canvas&gt;</code>. In this case, we are using the '2d' canvas (there also exists a 'webgl' context for rendering in 3d if it's supported by the browser). 
+       </p>
+       <p>
+   In our code, we will only be manipulating the <code>&lt;canvas&gt;</code> in 'click' event listeners, all of which are initialized in the <code>$(document).ready()</code> function. Therefore, we will get the context of the canvas in this function so we can use it in each of our event listeners. Locate this function in the code and add the following lines to get the context of the canvas:
+       </p>
+
+       <pre class="prettyprint lang-js">
+var canvas = document.getElementById("myCanvas");
+var ctxt = canvas.getContext('2d');
+       </pre>
+
+       <h4>Step 2: Drawing a Triangle to the Canvas</h4>
+       <p>
+   Now that you have the context, it's time to start drawing to the <code>&lt;canvas&gt;</code>. We will be putting this code in the <code>click</code> event handler for <code>button_draw_triangle</code>. Before we draw the triangle, we need to define colors in the <code>context</code>: one for the fill and one for the stroke. We can set the fill color by setting <code>fillStyle</code> to the desired hexidecimal color string (ex: "#f00" or "#ff0000" for bright red). We can do the same for the stroke by setting the <code>strokeStyle</code>. To change the width of the stroke, we set the <code>lineWidth</code> to the desired width (in this case, 3).
+       </p>
+       <pre class="prettyprint lang-js">
+ctxt.fillStyle   = '#f00';
+ctxt.strokeStyle = '#000';
+ctxt.lineWidth   = 3;
+       </pre>
+       <p>
+   There is no built in function for drawing a triangle--instead, we have to draw a triangle by defining a path and filling it in. Here's the triangle we will be drawing, with <code>&lt;canvas&gt;</code> coordinates attached:
+       </p>
+       <div class="figure"><img src="figures/ex4-4.png" /></div>
+       <p>
+   Notice how the origin of the coordinate system is in the upper left corner of the <code>&lt;canvas&gt;</code> and that the y coordinates increase from top to bottom. After we call <code>beginPath</code>, we use <code>moveTo</code> to define the point where we start drawing the triangle. After that, we use <code>lineTo(x,y)</code> to add a line from where we are to the new x and y.
+       </p>
+       <pre class="prettyprint lang-js">
+ctxt.beginPath();
+ctxt.moveTo(60, 240); 
+ctxt.lineTo(240, 240);
+ctxt.lineTo(150, 60);
+       </pre>
+   
+       <p>
+   To complete the path, we call <code>closePath</code>, which completes the path back to the starting point. Then, we call<code>fill()</code> to fill the shape and <code>stroke()</code> to draw the outline.
+       </p>
+       <pre class="prettyprint lang-js">
+ctxt.closePath();
+ctxt.fill();
+ctxt.stroke();
+       </pre>
+       
+       <h4>Step 3: Drawing a Rotated Triangle to the Canvas</h4>
+       <p>
+   Now, we will draw a rotated triangle to the <code>&lt;canvas&gt;</code>. We will be putting this code in the <code>click</code> event handler for <code>button_draw_rotated_triangle</code>. Because rotational math is difficult, we will use provided methods in the <code>context</code> to apply transformations to the <code>context</code>. First, we will set the fill andstroke color as before:
+       </p>
+       <pre class="prettyprint lang-js">
+ctxt.fillStyle   = '#f00';
+ctxt.strokeStyle = '#000';
+ctxt.lineWidth   = 3;
+       </pre>
+       <p>
+   Next we will apply the transformations. We want a triangle rotated by 45 degrees, so we will have to apply a rotational transformation to the <code>context</code>. However, the rotational transformation works around a the origin of the <code>context</code>, which is currently on the upper left side of the canvas. Therefore, we first need to change the origin of the canvas. We will do so by also applying a translation to the canvas. In this case, we will move the origin to the center of the <code>&lt;canvas&gt;</code> and rotate about that.
+       </p>
+       <pre class="prettyprint lang-js">
+ctxt.translate(canvas.width / 2, canvas.height / 2);
+ctxt.rotate(Math.PI / 4);
+       </pre>
+       <p>
+   Now we will draw the triangle onto this transformed context. However, to draw the triangle into the center of the <code>&lt;canvas&gt;</code>, we will need to slightly adapt the coordinates for this transformation. We will now draw the triangle with respect to the new origin:
+       </p>
+       <div class="figure"><img src="figures/ex4-5.png" /></div>
+       <p>
+   After rotation, this will be the desired triangle. We write the code as above, changing the coordinates when necessary:
+       </p>
+       <pre class="prettyprint lang-js">
+ctxt.beginPath();
+ctxt.moveTo(-90, 90); 
+ctxt.lineTo(90, 90);
+ctxt.lineTo(0, -90);
+
+ctxt.closePath();
+ctxt.fill();
+ctxt.stroke();
+       </pre>
+       <p>
+   Finally, because we are using the same <code>context</code> for each button, we need to reset the context back to its original origin/rotation. To do this, we apply the reverse transformations in the reverse order:
+       </p>
+       <pre class="prettyprint lang-js">
+ctxt.rotate(-Math.PI / 4);
+ctxt.translate(-canvas.width / 2, -canvas.height / 2);
+       </pre>
+
+       <h4>Step 4: Clearing the Canvas</h4>
+       <p>
+   Finally, we will write the code to clear the <code>&lt;canvas&gt;</code>. We will be putting this code in the <code>click</code> event handler for <code>button_clear_canvas</code>. To do this, we will simply clear all of the pixels in the <code>&lt;canvas&gt;</code>. Note that the method used can also be used to only clear part of the <code>&lt;canvas&gt;</code>. 
+       </p>
+       <pre class="prettyprint lang-js">
+ctxt.clearRect(0, 0, canvas.width, canvas.height);
+       </pre>
+
+      </div>
+    </div>
+    
+
+       <!--#include virtual="../../footer.html"-->
+  </body>
+</html>

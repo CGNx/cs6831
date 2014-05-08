@@ -1,0 +1,80 @@
+<html>
+
+<head>
+	<title>
+		Dog's Homepage
+	</title>
+
+<!-- CSS -->
+<link href="style.css" rel="stylesheet">
+</head>
+
+<body>
+    <h1>Dog D. Dog</h1>
+    <h2 class="subheader">About</h2>
+
+    <div class="section" id="about">
+        <!--An h2 header - smaller than the h1 header-->
+        <h2>About</h2>
+
+        <!--<p> tags are paragraphs have newlines before and after them-->
+        <p>Woof woof!</p>
+        <!--The <a> tag is a link.
+            The text between the <a> and </a> tags is the displayed text.
+            The href attribute has the link's target URL.-->
+        <p>Hi, I'm Dog. I love <a href="http://en.wikipedia.org/wiki/User_interface_design">User Interface Design</a>.</p>      
+    </div>
+
+
+            <!--Tables can be used to group text or images into rows and columns-->
+        <table border="1">
+            <!--Each <tr> is a row-->
+            <tr>
+                <!--Each <th> or <td> is a cell.
+                    The number of cells in a row determines the number of columns in the table.
+                -->
+                <th>Course Number</th>
+                <th>Course Title</th>
+                <th>Semester Taken</th>
+            </tr>
+            <tr>
+                <!--A <td> or cell can span multiple columns using the colspan attribute-->
+                <td class="enrollheader" colspan=3>For Credit</td>
+            </tr>
+            <!--We give certain rows the "currentlytaking" class, so we can color them differently in a CSS rule-->
+            <tr class="currentlytaking">
+                <td><a href="http://stellar.mit.edu/S/course/6/sp14/6.813/index.html">6.813</a></td>
+                <td>User Interface Design</td>
+                <td>Spring 2014</td>
+            </tr>           
+            <tr>
+                <td><a href="http://ai6034.mit.edu/fall12/index.php?title=Main_Page">6.034</a></td>
+                <td>Artificial Intelligence</td>
+                <td>Fall 2013</td>
+            </tr>
+            <tr>
+                <td><a href="http://stellar.mit.edu/S/course/6/fa13/6.006/">6.006</a></td>
+                <td>Introduction to Algorithms</td>
+                <td>Fall 2013</td>
+            </tr>
+            <tr>
+                <td class="enrollheader" colspan=3>Listener</td>
+            </tr>
+            <tr>
+                <td><a href="http://stellar.mit.edu/S/course/6/fa13/6.867/">6.867</a></td>
+                <td>Machine Learning</td>
+                <td>Fall 2013</td>
+            </tr>
+            <tr>
+                <td><a href="http://db.csail.mit.edu/6.830/index.php">6.830</a></td>
+                <td>Database Systems</td>
+                <td>Fall 2012</td>
+            </tr>
+        </table>
+
+        <a href="http://www.google.com">Google</a>
+
+
+
+</body>
+</html>

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+
+<!--
+  COLLABORATORS: I did this assignment entirely on my own.
+
+  RESOURCES (for PS2):
+  -I used w3schools to learn about HTML5 canvas
+  -I used the jQuery documentation to learn about for loops and classes
+  -Labmate Cody suggested use of e.details to capture function parameters in eventlistener and 
+  T.A. and Cody suggested dynamically creating divs instead of using a table (I had a full
+  working implementation but it didnt work in chrome with numbers not divisble by 400 for the
+  board size and I wanted to do this perfectly.)
+  -Read dev.opera.com to find out how to remove the inverted nipple on the end of a triangle
+    -solved by just setting linewidth to be very small i.e. 1
+
+  RESOURCES (for PS3):
+  -I learned drag and drop from the w3schools consortium http://www.w3schools.com/html/html5_draganddrop.asp
+  -Also learned drag and drop from: http://www.html5rocks.com/en/tutorials/dnd/basics/
+  -Used http://www.w3schools.com/jsref/jsref_obj_array.asp to learn about stacks
+  -Potential solution to transparency issue: http://stackoverflow.com/questions/9712535/html5-drag-and-drop-no-transparency
+  -Learned how to display lists: http://www.w3schools.com/html/html_lists.asp
+
+  EXTERNAL LIBRARY (for ps2):
+    I used http://creativecouple.github.com/jquery-timing/jquery-timing.min.js in order to automate
+    the game and speed up the game so that you don't have to click over and over to watch the game
+    play even at size 100.
+
+
+  
+-->
+
+<meta name="description" content="UI 6.837 PS3">
+<meta name="author" content="Curtis Northcutt">
+<title>Checkerboard</title>
+<link rel="shortcut icon" href="graphics/red-piece.png">
+
+<!-- Load style sheets -->
+<link rel="stylesheet" type="text/css" href="mainLayout.css" />
+<link href='http://fonts.googleapis.com/css?family=Raleway:400' rel='stylesheet' type='text/css'>
+
+<!-- Load any supplemental Javascript libraries here -->
+<script type="text/javascript" src="external_js/jquery-1.9.0.min.js"></script>
+<script type="text/javascript" src="http://creativecouple.github.com/jquery-timing/jquery-timing.min.js"></script> <!-- Adds the jquery timing wait function --> 
+<script type="text/javascript" src="checker.js"></script>
+<script type="text/javascript" src="boardEvent.js"></script>
+<script type="text/javascript" src="board.js"></script>
+<script type="text/javascript" src="rules.js"></script>
+
+<script type="text/javascript">
+
+//This script extracts parameters from the URL
+//from jquery-howto.blogspot.com
+
+    $.extend({
+        getUrlVars : function() {
+            var vars = [], hash;
+            var hashes = window.location.href.slice(
+                    window.location.href.indexOf('?') + 1).split('&');
+            for ( var i = 0; i < hashes.length; i++) {
+                hash = hashes[i].split('=');
+                vars.push(hash[0]);
+                vars[hash[0]] = hash[1];
+            }
+            return vars;
+        },
+        getUrlVar : function(name) {
+            return $.getUrlVars()[name];
+        }
+    });
+
+    //Global variables
+    var DEFAULT_BOARD_SIZE = 8;
+    var ACTUAL_BOARD_SIZE = DEFAULT_BOARD_SIZE;
+
+    //data model
+    var board;
+    var rules;
+    var whoseTurn = "black";	
+
+    var directionOf = function(color) {
+      if (color == "black") {
+        return -1;
+      }
+      return 1;
+    }
+
+    // Fill in this function to toggle the display for whose turn
+    // The color parameter should be either "black" or "red"
+    var toggleTurn = function(color) { //don't use color paramter
+        if (whoseTurn == 'black') {
+            whoseTurn = 'red';
+            $('#turn-text').html('Red Turn');
+            $('#turn').css('background-color', 'red');
+            $('#turn-text').css('color', 'black');
+        }
+        else {
+            whoseTurn = 'black';
+            $('#turn-text').html('Black Turn');
+            $('#turn').css('background-color', 'black');
+            $('#turn-text').css('color', 'white');
+        }
+    }
+
+    // This allows the Javascript code inside this block to only run when the page
+    // has finished loading in the browser.
+    $(document).ready(function() {
+
+        //Global variables
+        var board_dimension = 400;
+        var grid_size = board_dimension / DEFAULT_BOARD_SIZE;
+        var autoOpponent = false;
+        var arrows_on = true;
+        var animation_on = true;
+        var grid_size;
+        var canvas;
+        var ctx;
+
+        //Undo and Redo Stacks
+        var undoStack = [];
+        var redoStack = [];
+
+        //Create second canvas for arrows
+        var arrow_canvas = document.getElementById('arrow-canvas');
+        var arrow_ctx = arrow_canvas.getContext('2d');
+        arrow_ctx.strokeStyle = 'yellow';
+        arrow_ctx.fillStyle = 'yellow';
+
+        redrawBoard();
+        
+        function clearAllCheckers()
+        {
+            $(".checker").remove();
+        }
+
+        //Set-ups the canvas and board
+        function redrawBoard(size)
+        {
+            console.log(size);
+            clearAllCheckers();
+            if (typeof size !== 'undefined'){
+                board = new Board(size);
+            } else {
+                if ($.getUrlVar('size') && $.getUrlVar('size') >= 6) {
+                    board = new Board($.getUrlVar('size'));
+                } else {
+                    board = new Board(DEFAULT_BOARD_SIZE);
+                }
+                size = board.size();
+            }
+
+            //Redefine board size
+            ACTUAL_BOARD_SIZE = size;            
+            rules = new Rules(board);
+            grid_size = board_dimension / size;
+
+            //Reset Undo and Redo buttons
+            undoStack = [];
+            redoStack = [];
+            $('#btnUndo').prop('disabled',true);
+            $('#btnRedo').prop('disabled',true);
+
+            //Stroke approach to creating the checkers board
+            //Create canvas and context to draw on
+            canvas = document.getElementById('board-canvas');
+            ctx = canvas.getContext('2d');            
+
+            //Create a light grey board background
+            ctx.fillStyle = "#C0C0C0";
+            ctx.fillRect(0,0,board_dimension,board_dimension);
+
+            //Draw white squares for checkers board
+            ctx.fillStyle = "white";        
+            for ( var row = 0; row < size; row++ ) {
+                for ( var col = 0; col < size; col++ ) {
+                    if ((row + col)%2 == 0) { //if sum is even
+                        ctx.fillRect(col*grid_size,row*grid_size,grid_size,grid_size);
+                    }
+                }
+            }
+
+            //Call board elements to add event listeners to the board
+
+            //In this case e is definied as e = new BoardEvent(type, details);
+            //And var details = {checker:checker, row:row, col:col};
+            board.addEventListener('add',function (e) {
+                placeChecker(e.details['row'], e.details['col'],
+                    e.details['checker'].isKing, e.details['checker'].color);
+            },true);
+
+            //var details = {checker:checker, toRow:toRow, toCol:toCol, 
+            //                  fromRow:checker.row, fromCol:checker.col};        
+            board.addEventListener('move',function (e) {
+                //Draw arrow and animate movement
+                movingArrow(e.details['fromRow'], e.details['fromCol'], e.details['toRow'], e.details['toCol']);
+
+                //move function without animation
+                if (!animation_on) {
+                    removeChecker(e.details['fromRow'],e.details['fromCol']);
+                    movingArrow(e.details['fromRow'], e.details['fromCol'], e.details['toRow'], e.details['toCol']);
+                    placeChecker(e.details['toRow'], e.details['toCol'],
+                        e.details.checker.isKing, e.details.checker.color);
+                }
+            },true);
+
+            board.addEventListener('remove', function (e) {
+                removeChecker(e.details['row'],e.details['col']);
+            }, true);
+
+            board.addEventListener('promote',function (e) {
+                removeChecker(e.details.checker['row'],e.details.checker['col']);
+                placeChecker(e.details.checker['row'], e.details.checker['col'],
+                    true, e.details.checker.color);
+            },true);
+        }
+
+        //Input: A drage event
+        //Output: row and column location of the event in the checkers board.
+        var getBoardPosition  = function(e) {
+            var parentPosition = getPosition(e.originalEvent.currentTarget);
+            var x = e.originalEvent.clientX - parentPosition.x;
+
+            var y = e.originalEvent.clientY - parentPosition.y;
+            var col = Math.floor(x / grid_size);
+            var row = Math.floor(y / grid_size);
+            return {'row':row, 'col': col};
+        }
+        
+        //Recursively finds an objects position by adding all the offsets of all parents.
+        function getPosition(obj) {
+            var xPosition = 0;
+            var yPosition = 0;
+              
+            while (obj) {
+                xPosition += (obj.offsetLeft - obj.scrollLeft + obj.clientLeft);
+                yPosition += (obj.offsetTop - obj.scrollTop + obj.clientTop);
+                obj = obj.offsetParent;
+            }
+            return { x: xPosition, y: yPosition };
+        }
+
+        //Stores starting board position of drag in dataTransfer object
+        var starting_row = 0;
+        var starting_col = 0;
+
+        //Define Drag HTML5 functions for checkers
+        //Defines functionality when a draggable object starts being dragged.
+        function handleDragStart(e) {
+            if(whoseTurn != e.currentTarget.classList[1]) {return false;} //prevent wrong person from moving
+            var id = e.currentTarget.id.substring(3);
+            var id = id.split("col");
+            //Stores starting board position of drag in dataTransfer object
+            starting_row = id[0];
+            starting_col = id[1];
+            //While moving checkers, display checker above arrows.
+            $('#' + e.currentTarget.id).css('z-index','101'); 
+
+            //Make copy of image
+            var ghostImg = document.createElement('img');
+            ghostImg.src = e.currentTarget.children[0].src;
+            ghostImg.width = grid_size;
+            ghostImg.height = grid_size;
+            e.originalEvent.dataTransfer.setDragImage(ghostImg, e.originalEvent.layerX, e.originalEvent.layerY);
+            this.style.opacity = '0';
+        }
+
+        //Defines functionality when a draggable object ends dragging.
+        function handleDragEnd(e) {
+            $('#' + e.currentTarget.id).css('z-index','99');
+            this.style.opacity = '1';
+        }
+
+        //Define Drop HTML5 functions for board
+        //Defines functionality when an object is being dragged over.
+        function handleDragOver(e) {
+            e.preventDefault();
+        }    
+
+        //Defines functionality when a checker piece is dropped on the board.
+        //makeMove = function(checker, turnDirection, playerDirection, toRow, toCol)
+        function handleDrop(e) {
+            e.preventDefault();
+            var pos = getBoardPosition(e);
+            
+            origRow = parseInt(starting_row);
+            origCol = parseInt(starting_col);
+            console.log('from ' + origRow + ', ' + origCol);
+            console.log('to ' + pos.row + ', ' + pos.col);
+            var check = board.getCheckerAt(origRow, origCol);
+            var turnDirection = directionOf(whoseTurn);
+            var playerDirection = directionOf(check.color);
+
+            animation_on = false;
+            var result = rules.makeMove(check, turnDirection, playerDirection, pos.row, pos.col);
+            animation_on = true;
+
+            if (result != null) { //moveTo position was valid, make move and toggle turn.
+              toggleTurn();
+              undoStack.push(result);
+              $('#btnUndo').prop('disabled', false);
+              redoStack = [];
+              $('#btnRedo').prop('disabled', true);
+            }
+            if (whoseTurn == 'red' && autoOpponent) {
+                setTimeout(function() {
+                    $('#btnAutoMove').trigger('click');
+                }, 750);
+            }
+        }
+
+        //This function places a checker on the board using the object method
+        //It places the png checker on the board using relative positioning to the board
+        //Input: checker properities: row location, column location, isKing, and color
+        //Output: None, modifies the html directly
+        function placeChecker(row, col, isKing, color)
+        {
+            //Locate file path of the png matching this checker
+            var tail = isKing ? '-king.png' : '-piece.png';
+            var path = 'graphics/' + color + tail;
+
+            //Create element containing image
+            var id = 'row' + row + 'col' + col;
+            var img = "<img class = 'checker-png' src=" + path + "/>";            
+            var elem = "<div id='"+ id +"'> " + img + "</div>";                       
+
+            //Calculate element position
+            var x = (col*grid_size+1) + 'px'; //Add one to account for 1px border around canvas
+            var y = (row*grid_size+1) + 'px'; //Add one to account for 1px border around canvas
+            var width = grid_size + 'px';
+            var height = grid_size + 'px';
+
+            //Check if elemenet already exits
+            if ($('#' + id).length) {
+                $('#' + id).html(img);
+            } else{
+                //Add element if it does not already exist
+                $('#content-wrapper').append(elem); 
+
+                //Position Element
+                $('#' + id).css('position', 'absolute');
+                $('#' + id).css('left', x);
+                $('#' + id).css('top', y);
+                $('#' + id).css('width', width);
+                $('#' + id).css('height', height);
+                $('#' + id).addClass('checker');
+                if (color == 'black') {
+                    $('#' + id).addClass('black');
+                } else {
+                    $('#' + id).addClass('red');
+                }
+
+                //Add event handlers
+                $('#' + id).attr('draggable','true');
+                $('#' + id).on('dragstart',handleDragStart);
+                $('#' + id).on('dragend',handleDragEnd);
+                //$('#' + id).on('mousedown',handleMouseDown);
+            }
+        }
+
+            
+
+       
+        //This function removes a checker on the board.
+        //Input: checker row and column location
+        //Output: None, modifies the html directly
+        function removeChecker(row, col)
+        {
+            var id = '#row' + row + 'col' + col;
+            $(id).remove();
+        }
+
+        //This function draws an arrow from (r1,c1) to (r2,c2) on the ctx canvas contex
+        function movingArrow(r1, c1, r2, c2)
+        {
+            //Reset board
+            arrow_ctx.clearRect(0,0,arrow_canvas.width,arrow_canvas.height);
+
+            //Find start and end points
+            var x1 = c1*grid_size +.5*grid_size +1;
+            var x2 = c2*grid_size +.5*grid_size +1;
+            var y1 = r1*grid_size +.5*grid_size +1;
+            var y2 = r2*grid_size +.5*grid_size +1;            
+
+            //Draw line            
+            arrow_ctx.lineWidth = .5*Math.sqrt(grid_size); //proportion explained below
+            arrow_ctx.beginPath();
+            arrow_ctx.moveTo(x1, y1);
+            //Shrink line so triangle fits on end.
+            if (x2 == x1) {//straight line (can't divide by zero)
+                arrow_ctx.lineTo(x2, y2 - 10*(y2-y1)/Math.abs(y2-y1));
+            } else if (y1 == y2) {
+                arrow_ctx.lineTo(x2 - 10*(x2-x1)/Math.abs(x2-x1), y2);
+            } else {
+                arrow_ctx.lineTo(x2 - (x2-x1)/Math.abs(x2-x1), y2 - (y2-y1)/Math.abs(y2-y1));
+            }
+            arrow_ctx.stroke();
+            arrow_ctx.closePath();
+
+            //Compute triangle end points in addition to x2,y2
+            //We do this by subtracting unit vectors in direction of x and y components.
+            //And scalling size by sqrt(grid_size) - since its a n^2 board and we
+            //want to let the triangle grow smaller at the same rate the squares grow smaller.
+            var angle = Math.atan2(x2-x1,y2-y1);
+            var edge = 1.5*Math.sqrt(grid_size);
+            var x3 = x2 + edge;
+            var y3 = y2 - edge*Math.sqrt(3);
+            var x4 = x2 - edge;
+            var y4 = y2 - edge*Math.sqrt(3);
+
+            //Draw triangle
+            arrow_ctx.save();
+            arrow_ctx.lineWidth = .1;
+            arrow_ctx.beginPath();
+            arrow_ctx.translate(x2,y2);            
+            arrow_ctx.rotate(-angle);
+            arrow_ctx.moveTo(x2 - x2, y2 -y2);
+            arrow_ctx.lineTo(x3- x2, y3 -y2);
+            arrow_ctx.lineTo(x4- x2, y4 -y2);
+            arrow_ctx.lineTo(x2- x2, y2 -y2);
+            arrow_ctx.stroke();
+            arrow_ctx.fill();
+            arrow_ctx.restore();
+
+            //Perform animation            
+            if (animation_on) {
+                //id of starting location
+                var id = 'row' + r1 + 'col' + c1;
+
+                //Calculate how far we move
+                var x = (c2*grid_size+1) + 'px'; //Add one to account for 1px border around canvas
+                var y = (r2*grid_size+1) + 'px'; //Add one to account for 1px border around canvas
+
+                //Animate movement of checker            
+                $('#' + id).animate({
+                    top: y,
+                    left: x,
+                  }, 750 );
+
+                $('#' + id).attr('id','row' + r2 + 'col' + c2);
+            }
+        }
+
+        //Makes checker a non-king regardless of whether check is king or not.
+        function demoteChecker(row, col, color) {
+            removeChecker(row, col);
+            placeChecker(row, col, false, color);
+        }
+
+
+        
+        $("#btnNewGame").click(function(evt) {
+            clearAllCheckers();
+            redrawBoard(ACTUAL_BOARD_SIZE);
+            board.prepareNewGame();
+            if (whoseTurn = 'red')
+            {
+                toggleTurn();
+            }
+            arrow_ctx.clearRect(0,0,arrow_canvas.width,arrow_canvas.height);
+        });
+
+        $("#btnAutoMove").click(function(evt) {
+          var playerColor = whoseTurn;
+          var playerDirection = directionOf(playerColor);
+          var result = rules.makeRandomMove(playerColor, playerDirection);
+          if (result != null) {
+            toggleTurn();
+            undoStack.push(result);
+            $('#btnUndo').prop('disabled', false);
+            redoStack = [];
+            $('#btnRedo').prop('disabled', true);
+          }
+          if (whoseTurn == 'red' && autoOpponent) {
+            setTimeout(function() {
+                $('#btnAutoMove').trigger('click');
+            }, 750);
+          }
+        });
+
+        $("#btnUndo").click(function(evt) {
+            var recent = undoStack.pop();
+            var row = recent.to_row;
+            var col = recent.to_col;
+            if (recent.made_king) {
+                board.square[row][col].isKing = false;
+                demoteChecker(row, col, board.getCheckerAt(row, col).color);
+            }
+            board.moveTo(board.getCheckerAt(row,col), recent.from_row, recent.from_col);           
+
+            //Add checkers that were removed during the jump back to the board.
+            var wait_time = 0;
+            if (animation_on) {
+                wait_time = 750;
+                //user should not be able to undo until first undo finishes
+                $('#btnUndo').prop('disabled', true);
+            }
+            setTimeout(function() {
+                for (var index in recent.remove) {
+                var c = new Checker("red", false);
+                c.color = recent.remove[index].color;
+                c.isKing = recent.remove[index].isKing;
+                board.add(c, recent.remove[index].row, recent.remove[index].col);
+                }
+                $('#btnUndo').prop('disabled', false);
+                if (undoStack.length == 0) {
+                    $('#btnUndo').prop('disabled', true);
+                }
+            }, wait_time);
+            
+            toggleTurn();
+            redoStack.push(recent);
+            $('#btnRedo').prop('disabled', false);
+
+            if (undoStack.length == 0) {
+                $('#btnUndo').prop('disabled', true);
+            }
+        });
+
+        $("#btnRedo").click(function(evt) {            
+            recent = redoStack.pop();
+            var checker = board.getCheckerAt(recent.from_row,recent.from_col);
+            var turnDirection = directionOf(whoseTurn);
+            var playerDirection = directionOf(checker.color);
+            rules.makeMove(checker,turnDirection, playerDirection, recent.to_row, recent.to_col);
+            
+            if (animation_on) {
+                //user should not be able to redo until first redo finishes
+                $('#btnRedo').prop('disabled', true);
+                setTimeout(function() {
+                    $('#btnRedo').prop('disabled', false);
+                    if (redoStack.length == 0) {
+                        $('#btnRedo').prop('disabled', true);
+                    }
+                }, 750);
+            }          
+
+            toggleTurn();
+            undoStack.push(recent);
+            $('#btnUndo').prop('disabled', false);
+
+            if (redoStack.length == 0) {
+                $('#btnRedo').prop('disabled', true);
+            }
+        });
+
+        $("#rndSize").click(function(evt) {
+            ACTUAL_BOARD_SIZE = Math.floor(Math.random()*22 + 3)*2;
+            $('#btnNewGame').trigger('click');
+        });
+
+        $("#autoPlay").click(function(evt) {
+            $("#autoPlay").val("Go even faster!");
+            $('#btnAutoMove').repeat(1000).trigger('click').wait(100);
+        });
+
+        $("#toggleArrow").click(function(evt) {
+            if (arrows_on) {
+                arrows_on = false;
+                $('#arrow-canvas').css('visibility','hidden');                
+                $("#toggleArrow").attr("value", "Yellow Arrows Off");
+            } else {
+                arrows_on = true;
+                $('#arrow-canvas').css('visibility','visible');                
+                $("#toggleArrow").attr("value", "Yellow Arrows On");
+            }
+        });
+
+        $("#toggleAnimation").click(function(evt) {
+            if (animation_on) {
+                animation_on = false;
+                $("#toggleAnimation").attr("value", "Animation Off");
+            } else {
+                animation_on = true;
+                $("#toggleAnimation").attr("value", "Animation On");
+            }
+        });
+
+        $("#autoOpponent").click(function(evt) {
+            if (autoOpponent) {
+                autoOpponent = false;
+                $("#autoOpponent").attr("value", "Auto Red off");
+                $("#autoOpponent").css("background-color", "white");
+                $("#autoOpponent").css("color", "black");
+            } else {
+                autoOpponent = true;
+                $("#autoOpponent").attr("value", "Auto Red on");
+                $("#autoOpponent").css("background-color", "red");
+                $("#autoOpponent").css("color", "white");
+            }
+        });
+
+        $('#content-wrapper').on('drop',handleDrop);
+        $('#content-wrapper').on('dragover',handleDragOver);
+        board.prepareNewGame();
+
+    });
+</script>
+
+
+</head>
+
+<body>
+<div id='title'>
+    <span>Let's play </span><span class ='red'>C</span><span class ='black'>h</span><span class ='red'>e</span><span class ='black'>c</span><span class ='red'>k</span><span class='black'>e</span><span class='red'>r</span><span class='black'>s</span><span class='red'>!</span>
+</div>
+<table id="mainTable">
+    <tr>
+        <td class="navigation">
+          <table>
+			  <tr><td><div id="turn"><p id="turn-text">Black Turn</p></div></td></tr>
+              <tr><td><input id="btnNewGame" type="button" name="new" value="New Game"/></td></tr>
+              <tr><td><input id="btnAutoMove" type="button" name="new" value="Auto Move"/></td></tr>
+              <tr><td><input id="btnUndo" type="button" disabled name="new" value="Undo"/></td></tr>
+              <tr><td><input id="btnRedo" type="button" disabled name="new" value="Redo"/></td></tr>  
+            </table>
+        </td>
+
+        
+        <td id="content" width = "400" height = "400">
+            <div id = "wrapper">
+                <div id="content-wrapper">
+    			     <!--canvas to display board and yellow arrow markers -->
+    				<canvas id="board-canvas" width="400" height="400">
+                    </canvas>   
+
+                    <canvas id="arrow-canvas" width="400" height="400">
+                    </canvas>                 
+                </div>
+            </div>
+        </td>
+
+        <td class="navigation" id="options">
+          <table>           
+              <tr><td><input id="autoOpponent" type="button" name="new" value="Auto Red Off"/></td></tr>
+              <tr><td><input id="rndSize" type="button" name="new" value="Random Board Size"/></td></tr>
+              <tr><td><input id="autoPlay" type="button" name="new" value="Auto Play Both"/></td></tr>
+              <tr><td><input id="toggleArrow" type="button" name="new" value="Yellow Arrows On"/></td></tr>
+              <tr><td><input id="toggleAnimation" type="button" name="new" value="Animation On"/></td></tr>
+            </table>
+        </td>
+        
+    </tr>
+
+</table>
+<p style="font-size: 20px; margin-left: 100px">Note: To play an opponent, click the "Auto Red" button.<br>Then click and drag any black piece to get started.</p><br>
+
+<p style="font-size: 26px">Wish the checkers didn't grow in size when you drag them? </p>
+<p style="font-size: 20px">My perfect implementation is <a href='http://cgn.scripts.mit.edu/checkers'> here</a> using Google Chrome.<br>Unfortunately, Firefox only supports setDragImage images in native size. You cannot change the size.</p>
+
+
+<p style="font-size: 26px">What do the buttons do? </p>
+<ul style="font-size: 20px">
+<li><code>New Game</code>: Resets Board pieces and sets turn to Black Turn.</li>
+<li><code>Auto Move</code>: Makes a random move for the current turn.</li>
+<li><code>Undo</code>: Reverts board to previous state before last move.</li>
+<li><code>Redo</code>: Re-moves the last move that was undone via Undo if no new move was made.</li><br>
+<li style="color: red"><code>Auto Red</code>: You are black. Computer is red. Toggles whether red will move automatically.</li>
+<li><code>Random Board Size</code>: Creates a new game with a randomly generated board size.</li>
+<li><code>Speed Things Up! / Go faster</code>: Automatically plays for red and black pieces. Pressing again will speed up this process.</li>
+<li><code>Toggle Animation</code>: Turns animation movement of pieces on and off.</li>
+<li><code>Toggle Arrows</code>: Turn off/on display of yellow movement arrows.</li>
+</ul>
+
+<p style="font-size: 26px">Checkers runs best in these browsers:</p>
+<ul style="font-size: 20px">
+<li>Mozilla Firefox, latest  version.</li>
+<li>Google Chrome, latest version.</li>
+
+</body>
+
+</html>

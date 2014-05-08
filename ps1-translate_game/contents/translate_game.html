@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!--
+   COLLABORATORS: I asked advice from Cody Coleman about how to fix a bug, but fixed the bug myself. Otherwise I did this entirely on my own.
+
+   I used Bootstrap for a nicer front-end feel.
+   
+  -->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="UI 6.837 Project One">
+    <meta name="author" content="Curtis Northcutt">
+    <title>Ready, Set, Translate !</title>
+    
+    <link type="text/css" href="jquery/css/ui-lightness/jquery-ui-1.10.0.custom.css" rel="stylesheet" />
+    <link type="text/css" href="dist/css/bootstrap.min.css" rel="stylesheet">
+    <link type="text/css" href="translate_game.css" rel="stylesheet" />
+
+    <script type="text/javascript" src="jquery/js/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="jquery/js/jquery-ui-1.10.0.custom.min.js"></script>
+    <script type="text/javascript" src="dicts.json"></script>
+    <script type="text/javascript" src="translate_game.js"></script>
+
+    <link rel="shortcut icon" href="logo.ico">
+
+  </head>
+
+  <body>
+    <div>
+      <!--Holds the title with langauge information-->
+      <div class="title">
+        <span id="title-length"> <!--Encapsulate in span to get length with jquery-->
+          <span class="text-muted">Translate from </span>
+          <span class = "langfrom"></span>
+          <span class="text-muted">to</span>
+          <span class = "langto"></span>
+        </span>
+
+        <!--Allows user to choose language-->
+        <div class="language-selection">
+          <span class="text-muted font20">
+            Languages:
+          </span>
+          <select id = "select-lang" class="font18">
+            <option value = "sp2en">Spanish to English</option>
+            <option value = "fr2en">French to English</option>
+            <option value = "fr2ge">Italian to German</option>
+          </select>
+        </div>
+      </div>      
+
+      <!--Table Headings and user input area-->
+      <table id="results" class="table-responsive table-condensed">
+        <thead class="fontxlarge">
+          <tr class="text-muted" >             
+              <th class="langfrom"></th>
+              <th class="langto"></th>
+              <th>Answer</th>
+              <th style="color:blue">Correct</th>
+              <th style="color:red">Incorrect</th>
+          </tr>
+          <tr>             
+              <th id="query" class=".space-below"></th>
+              <th class=".space-below">
+                <input type="text" id="user-ans" class="form-control">
+              </th>
+              <th class=".space-below">
+                <input type="button" id="see-ans" value="See Answer">
+              </th>
+              <th class=".space-below" id="count-correct">0</th>
+              <th class=".space-below" id="count-wrong">0</th>
+          </tr>
+        </thead>
+
+        <!--Previous answers are added as table rows here with JQuery-->
+
+      </table>
+    </div>
+  </body>
+</html>

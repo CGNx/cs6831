@@ -1,0 +1,82 @@
+* {  /* to remove the top and left whitespace */
+   font-family: 'Raleway', sans-serif;
+   font-size: large;
+}
+
+html, body, div{
+	width:100%;
+	height:100%;
+	background-color: LightGrey;
+}
+
+p {
+	font-size
+}
+
+#page-content {
+	padding-top: 30px;
+}
+
+#progress {
+	width: 100%;
+	height: 40px;
+	padding-top: 10px;
+	padding-left: 350px;
+	padding-bottom: 10px;
+}
+
+#left-panel {
+	width: 300px;
+	height: 702px;
+	padding: 30px;
+	padding-top: 0;
+	display: inline-block;
+	float: left;
+}
+
+#right-panel {
+	position: relative;
+	width: 712px;
+	height: 712px;
+	display: inline-block;
+	float: left;
+}
+
+#bubble-canvas {
+	position: absolute;
+	display: inline-block;
+	border: 5px dashed gray;
+	border-radius: 15px;
+	cursor: crosshair;
+	z-index: 9;
+}
+
+#bubble-closest-canvas {
+	position: absolute;
+	display: inline-block;
+	border: 5px dashed gray;
+	border-radius: 15px;
+	cursor: crosshair;	
+	background-color: transparent;
+	z-index: 9;
+}
+
+#cursor-canvas {
+	position: absolute;
+	display: inline-block;
+	border: 5px dashed gray;
+	border-radius: 15px;
+	cursor: crosshair;
+	background-color: transparent;
+	opacity: .35;
+	z-index: 10;
+}
+
+#which-hand {
+	display: inline-block;
+	margin-right: 300px;
+}
+
+canvas {
+	background-color: white;
+}
